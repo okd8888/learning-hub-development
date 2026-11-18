@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CategorySidebar from '../../components/navigation/CategorySidebar.astro';
+import ArticleExplorer from '../../components/cards/ArticleExplorer.vue';
+import { getPublishedArticles, getReadingMinutes, getTaxonomyCounts, sortArticles } from '../../lib/content';
+const articles = sortArticles(await getPublishedArticles());
+const items = articles.map(({ data, body }) => ({ stableId:data.stableId, slug:data.slug, title:data.title, description:data.description, category:data.category, type:data.type, tags:data.tags, publishedAt:data.publishedAt, updatedAt:data.updatedAt, readingMinutes:getReadingMinutes(body??''), featured:data.featured, featuredOrder:data.featuredOrder }));
+const counts = getTaxonomyCounts(articles);
+---
+<BaseLayout title="所有文章">
+  <main id="main" class="portal-layout has-sidebar" data-pagefind-ignore><CategorySidebar counts={counts} active="all" /><section><div class="page-heading"><div><span class="eyebrow">知識索引</span><h1>所有文章</h1><p>共 {articles.length} 篇學習紀錄，依主題、類型與標籤探索。</p></div></div><ArticleExplorer client:load items={items} base={import.meta.env.BASE_URL} pageSize={12} /><nav class="pagination" aria-label="文章分頁"><span aria-current="page">1</span>{articles.length > 12 ? <a href={`${import.meta.env.BASE_URL}articles/page/2/`}>下一頁</a> : null}</nav></section></main>
+</BaseLayout>

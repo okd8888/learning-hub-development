@@ -1,0 +1,20 @@
+---
+import ThemeToggle from './ThemeToggle.vue';
+import { withBase } from '../../lib/urls';
+---
+<header class="site-header" data-pagefind-ignore>
+  <div class="header-inner">
+    <a class="wordmark" href={withBase('/')}><span class="brand-mark">L</span><span>LearningHub</span></a>
+    <nav class="main-nav" aria-label="主要導覽">
+      <a href={withBase('/articles/')}>文章</a>
+      <a href={withBase('/paths/')}>學習路徑</a>
+      <a href={withBase('/resources/')}>資源</a>
+      <a href={withBase('/about/')}>關於</a>
+    </nav>
+    <div class="header-actions">
+      <button class="search-trigger" type="button" data-search-open aria-keyshortcuts="Control+K Meta+K"><span aria-hidden="true">⌕</span><span class="search-label">搜尋</span><kbd>⌘ K</kbd></button>
+      <ThemeToggle client:load />
+      <button class="menu-trigger" type="button" aria-label="開啟導覽" aria-expanded="false" data-menu-toggle><span></span><span></span></button>
+    </div>
+  </div>
+</header>

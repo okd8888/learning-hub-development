@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ArticleExplorer from '../../../components/cards/ArticleExplorer.vue';
+import taxonomy from '../../../config/taxonomy.json';
+import {getPublishedArticles,getReadingMinutes,sortArticles} from '../../../lib/content';
+export async function getStaticPaths(){return taxonomy.categories.flatMap(category=>category.children.map(child=>({params:{category:category.id,subcategory:child.id},props:{category,child}})))}
+const {category,child}=Astro.props;const all=sortArticles(await getPublishedArticles());const matches=all.filter(a=>a.data.category===category.id&&a.data.subcategory===child.id);
+const items=matches.map(({data,body})=>({stableId:data.stableId,slug:data.slug,title:data.title,description:data.description,category:data.category,type:data.type,tags:data.tags,publishedAt:data.publishedAt,updatedAt:data.updatedAt,readingMinutes:getReadingMinutes(body??''),featured:data.featured,featuredOrder:data.featuredOrder}));
+---
+<BaseLayout title={`${category.label}／${child.label}`}><main id="main" class="content-page"><p class="breadcrumbs"><a href={`${import.meta.env.BASE_URL}categories/${category.id}/`}>{category.label}</a><span>{child.label}</span></p><h1>{child.label}</h1><ArticleExplorer client:load items={items} base={import.meta.env.BASE_URL}/></main></BaseLayout>

@@ -1,0 +1,27 @@
+{
+  "categories": [
+    { "id": "ai", "label": "AI 與人工智慧", "order": 1, "icon": "sparkles", "children": [{ "id": "agent", "label": "Agent" }, { "id": "mcp", "label": "MCP" }, { "id": "llm", "label": "大型語言模型" }] },
+    { "id": "development", "label": "程式開發", "order": 2, "icon": "code", "children": [{ "id": "typescript", "label": "TypeScript" }, { "id": "web", "label": "網站開發" }] },
+    { "id": "infrastructure", "label": "系統與基礎架構", "order": 3, "icon": "server", "children": [{ "id": "git", "label": "Git" }, { "id": "linux", "label": "Linux" }] },
+    { "id": "data", "label": "資料庫與數據分析", "order": 4, "icon": "database", "children": [{ "id": "sql", "label": "SQL" }] },
+    { "id": "opensource", "label": "開源專案研究", "order": 5, "icon": "book-open", "children": [{ "id": "review", "label": "專案評估" }] },
+    { "id": "healthcare-it", "label": "醫療資訊技術", "order": 6, "icon": "heart-pulse", "children": [{ "id": "integration", "label": "系統整合" }] },
+    { "id": "design", "label": "UI/UX 與產品設計", "order": 7, "icon": "panels-top-left", "children": [{ "id": "prototype", "label": "原型設計" }] },
+    { "id": "experience", "label": "學習心得與實作經驗", "order": 8, "icon": "notebook-pen", "children": [{ "id": "practice", "label": "實作筆記" }] }
+  ],
+  "tags": [
+    { "id": "ai", "label": "AI", "aliases": ["人工智慧"] },
+    { "id": "agent", "label": "Agent", "aliases": ["代理人"] },
+    { "id": "mcp", "label": "MCP", "aliases": ["Model Context Protocol"] },
+    { "id": "typescript", "label": "TypeScript", "aliases": ["TS"] },
+    { "id": "web", "label": "Web", "aliases": ["網站"] },
+    { "id": "accessibility", "label": "無障礙", "aliases": ["a11y"] },
+    { "id": "security", "label": "安全", "aliases": ["security"] },
+    { "id": "learning", "label": "學習方法", "aliases": [] },
+    { "id": "data", "label": "資料", "aliases": ["data"] },
+    { "id": "git", "label": "Git", "aliases": [] },
+    { "id": "opensource", "label": "開源", "aliases": ["open source"] },
+    { "id": "privacy", "label": "隱私", "aliases": [] }
+  ],
+  "types": ["tutorial", "note", "review", "project", "resource", "reference", "reflection"]
+}

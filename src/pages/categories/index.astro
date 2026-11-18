@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import taxonomy from '../../config/taxonomy.json';
+import {getPublishedArticles} from '../../lib/content';
+import {withBase} from '../../lib/urls';
+const articles=await getPublishedArticles();
+---
+<BaseLayout title="分類總覽"><main id="main" class="content-page" data-pagefind-ignore><span class="eyebrow">主題索引</span><h1>知識分類</h1><p class="lead">依照主題整理的學習內容。每篇文章只設定一個主要分類，避免重複內容。</p><div class="category-tiles">{taxonomy.categories.map((category)=>{const count=articles.filter(a=>a.data.category===category.id).length;return <a class="category-tile" href={withBase(`/categories/${category.id}/`)}><span>{category.label}</span><small>{count} 篇 · {category.children.length} 個子分類</small></a>})}</div></main></BaseLayout>

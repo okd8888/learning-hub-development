@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CategorySidebar from '../../../components/navigation/CategorySidebar.astro';
+import ArticleExplorer from '../../../components/cards/ArticleExplorer.vue';
+import taxonomy from '../../../config/taxonomy.json';
+import {getPublishedArticles,getReadingMinutes,sortArticles} from '../../../lib/content';
+const pageSize=12;
+const all=sortArticles(await getPublishedArticles());
+const items=all.map(({data,body})=>({stableId:data.stableId,slug:data.slug,title:data.title,description:data.description,category:data.category,type:data.type,tags:data.tags,publishedAt:data.publishedAt,updatedAt:data.updatedAt,readingMinutes:getReadingMinutes(body??''),featured:data.featured,featuredOrder:data.featuredOrder}));
+const pageCount=Math.ceil(items.length/pageSize);
+export async function getStaticPaths(){const all=sortArticles(await getPublishedArticles());const count=Math.ceil(all.length/12);return Array.from({length:Math.max(0,count-1)},(_,index)=>({params:{page:String(index+2)},props:{page:index+2}}));}
+const {page}=Astro.props;const counts=Object.fromEntries(taxonomy.categories.map(c=>[c.id,all.filter(a=>a.data.category===c.id).length]));counts.all=all.length;
+---
+<BaseLayout title={`所有文章・第 ${page} 頁`}><main id="main" class="portal-layout has-sidebar" data-pagefind-ignore><CategorySidebar counts={counts} active="all"/><section><div class="page-heading"><div><span class="eyebrow">知識索引</span><h1>所有文章</h1><p>第 {page} 頁，共 {pageCount} 頁。</p></div></div><ArticleExplorer client:load items={items} base={import.meta.env.BASE_URL} pageSize={pageSize} initialPage={page}/><nav class="pagination" aria-label="文章分頁"><a href={page===2?`${import.meta.env.BASE_URL}articles/`:`${import.meta.env.BASE_URL}articles/page/${page-1}/`}>上一頁</a><span aria-current="page">{page}</span>{page < pageCount ? <a href={`${import.meta.env.BASE_URL}articles/page/${page+1}/`}>下一頁</a> : null}</nav></section></main></BaseLayout>

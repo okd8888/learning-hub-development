@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleExplorer from '../../components/cards/ArticleExplorer.vue';
+import taxonomy from '../../config/taxonomy.json';
+import {getPublishedArticles,getReadingMinutes,sortArticles} from '../../lib/content';
+export async function getStaticPaths(){return taxonomy.tags.map(tag=>({params:{tag:tag.id},props:{tag}}))}
+const {tag}=Astro.props;const articles=sortArticles(await getPublishedArticles()).filter(a=>a.data.tags.includes(tag.id));const items=articles.map(({data,body})=>({stableId:data.stableId,slug:data.slug,title:data.title,description:data.description,category:data.category,type:data.type,tags:data.tags,publishedAt:data.publishedAt,updatedAt:data.updatedAt,readingMinutes:getReadingMinutes(body??''),featured:data.featured}));
+const pageCount=Math.ceil(articles.length/12);
+---
+<BaseLayout title={`#${tag.label}`}><main id="main" class="content-page"><span class="eyebrow">標籤</span><h1>#{tag.label}</h1><ArticleExplorer client:load items={items} base={import.meta.env.BASE_URL}/><nav class="pagination" aria-label="文章分頁"><span aria-current="page">1</span>{pageCount>1?<a href={`${import.meta.env.BASE_URL}tags/${tag.id}/page/2/`}>下一頁</a>:null}</nav></main></BaseLayout>

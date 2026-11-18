@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import taxonomy from '../../config/taxonomy.json';
+import {getPublishedArticles} from '../../lib/content';
+import {withBase} from '../../lib/urls';
+const articles=await getPublishedArticles();
+---
+<BaseLayout title="標籤"><main id="main" class="content-page" data-pagefind-ignore><span class="eyebrow">主題關鍵字</span><h1>探索標籤</h1><p class="lead">透過標籤找到跨分類的關聯內容。</p><div class="tag-cloud">{taxonomy.tags.map(tag=><a href={withBase(`/tags/${tag.id}/`)}>#{tag.label}<small>{articles.filter(article=>article.data.tags.includes(tag.id)).length}</small></a>)}</div></main></BaseLayout>

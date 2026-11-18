@@ -1,0 +1,12 @@
+---
+import { siteConfig } from '../../config/site';
+import { withBase } from '../../lib/urls';
+---
+<footer class="site-footer" data-pagefind-ignore>
+  <div class="footer-inner">
+    <a class="wordmark" href={withBase('/')}><span class="brand-mark">L</span><span>LearningHub</span></a>
+    <p>以 Markdown 累積、整理並分享學習成果。</p>
+    <div class="footer-links"><a href={withBase('/about/')}>關於與政策</a><a href={withBase('/rss.xml')}>RSS</a>{siteConfig.repositoryUrl && <a href={siteConfig.repositoryUrl}>GitHub</a>}</div>
+    <small>程式碼與文章授權待作者確認。本站閱讀偏好僅保存在你的瀏覽器。</small>
+  </div>
+</footer>

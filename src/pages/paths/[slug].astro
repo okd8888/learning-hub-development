@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {getCollection} from 'astro:content';
+import {getPublishedArticles} from '../../lib/content';
+export async function getStaticPaths(){return (await getCollection('learningPaths')).filter(path=>!path.data.draft).map(path=>({params:{slug:path.data.slug},props:{path}}))}
+const {path}=Astro.props;const articles=await getPublishedArticles();const byId=new Map(articles.map(article=>[article.data.stableId,article]));const steps=path.data.steps.map(step=>({step,article:byId.get(step.articleId)}));const publishedStepIds=steps.flatMap(item=>item.article?[item.article.data.stableId]:[]);
+---
+<BaseLayout title={path.data.title}><main id="main" class="content-page"><a href={`${import.meta.env.BASE_URL}paths/`}>← 所有學習路徑</a><span class="eyebrow">{path.data.difficulty} · {steps.length} 個步驟</span><h1>{path.data.title}</h1><p class="lead">{path.data.description}</p><div class="path-progress" data-path-progress data-steps={JSON.stringify(publishedStepIds)}><span></span></div><ol class="path-list">{steps.map(({step,article},index)=><li class="path-step"><span class="step-number">{index+1}</span>{article?<div><a href={`${import.meta.env.BASE_URL}articles/${article.data.slug}/`}><strong>{step.title??article.data.title}</strong></a><p>{article.data.description}</p><small data-read-label={article.data.stableId}>尚未標記已讀</small></div>:<div><strong>{step.title??step.articleId}</strong><p>此步驟參照的文章尚未發布。</p></div>}</li>)}</ol><p>完成度：<span data-path-progress-text>0%</span></p></main></BaseLayout>

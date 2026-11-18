@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LibraryView from '../components/reader/LibraryView.vue';
+import {siteConfig} from '../config/site';
+import {getPublishedArticles,sortArticles} from '../lib/content';
+const articles=sortArticles(await getPublishedArticles()).map(({data})=>({stableId:data.stableId,slug:data.slug,title:data.title,description:data.description,url:`${import.meta.env.BASE_URL}articles/${data.slug}/`,publishedAt:data.publishedAt}));
+---
+<BaseLayout title="我的閱讀中心" noindex><main id="main" class="content-page"><span class="eyebrow">只存在這台裝置</span><h1>我的閱讀中心</h1><p class="lead">收藏、已讀與近期瀏覽紀錄保存在此瀏覽器。清除網站資料會移除這些資訊。</p><LibraryView client:load articles={articles} siteId={siteConfig.siteId} base={import.meta.env.BASE_URL}/></main></BaseLayout>

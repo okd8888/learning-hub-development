@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CategorySidebar from '../../components/navigation/CategorySidebar.astro';
+import ArticleExplorer from '../../components/cards/ArticleExplorer.vue';
+import taxonomy from '../../config/taxonomy.json';
+import { getPublishedArticles,getReadingMinutes,getTaxonomyCounts,sortArticles } from '../../lib/content';
+export async function getStaticPaths(){return taxonomy.categories.map(category=>({params:{category:category.id},props:{category}}))}
+const {category}=Astro.props; const all=sortArticles(await getPublishedArticles()); const articles=all.filter(a=>a.data.category===category.id);
+const items=articles.map(({data,body})=>({stableId:data.stableId,slug:data.slug,title:data.title,description:data.description,category:data.category,type:data.type,tags:data.tags,publishedAt:data.publishedAt,updatedAt:data.updatedAt,readingMinutes:getReadingMinutes(body??''),featured:data.featured,featuredOrder:data.featuredOrder}));
+const counts=getTaxonomyCounts(all);
+const pageCount=Math.ceil(articles.length/12);
+---
+<BaseLayout title={category.label}><main id="main" class="portal-layout has-sidebar"><CategorySidebar counts={counts} active={category.id}/><section><div class="page-heading"><div><span class="eyebrow">主分類</span><h1>{category.label}</h1><p>整理 {category.label} 相關的公開文章。</p></div></div><nav class="subcategory-nav" aria-label="子分類">{category.children.map(child=><a href={`${import.meta.env.BASE_URL}categories/${category.id}/${child.id}/`}>{child.label}</a>)}</nav><ArticleExplorer client:load items={items} base={import.meta.env.BASE_URL} initialCategory={category.id}/><nav class="pagination" aria-label="文章分頁"><span aria-current="page">1</span>{pageCount>1?<a href={`${import.meta.env.BASE_URL}categories/${category.id}/page/2/`}>下一頁</a>:null}</nav></section></main></BaseLayout>

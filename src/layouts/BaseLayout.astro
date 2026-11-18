@@ -1,0 +1,49 @@
+---
+import { siteConfig } from '../config/site';
+import '../styles/global.css';
+import SiteHeader from '../components/navigation/SiteHeader.astro';
+import SiteFooter from '../components/navigation/SiteFooter.astro';
+import SearchDialog from '../components/search/SearchDialog.vue';
+import { withBase } from '../lib/urls';
+const { title = siteConfig.name, description = siteConfig.description, canonical, noindex = false } = Astro.props;
+const fullTitle = title === siteConfig.name ? title : `${title}｜${siteConfig.name}`;
+const canonicalUrl = canonical ?? new URL(withBase(Astro.url.pathname.replace(import.meta.env.BASE_URL, '/')), Astro.site).href;
+---
+<!doctype html>
+<html lang="zh-Hant" data-theme="light" data-site-id={siteConfig.siteId}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f7f2" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={new URL(withBase('/images/social-card.svg'), Astro.site).href} />
+    <link rel="alternate" type="application/rss+xml" title="LearningHub RSS" href={withBase('/rss.xml')} />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="manifest" href={withBase('/site.webmanifest')} />
+    <script is:inline define:vars={{ base: import.meta.env.BASE_URL, siteId: siteConfig.siteId }}>
+      try {
+        const saved = localStorage.getItem(`learninghub:${siteId}:theme`);
+        const systemDark = matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = saved === 'light' || saved === 'dark' ? saved : systemDark ? 'dark' : 'light';
+        document.documentElement.dataset.theme = theme;
+      } catch { document.documentElement.dataset.theme = 'light'; }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳至主要內容</a>
+    <SiteHeader />
+    <div class="site-shell"><slot /></div>
+    <SiteFooter />
+    <SearchDialog client:load base={import.meta.env.BASE_URL} />
+    <script>
+      import '../scripts/site.ts';
+    </script>
+  </body>
+</html>

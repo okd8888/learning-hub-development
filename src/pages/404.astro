@@ -1,0 +1,5 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {withBase} from '../lib/urls';
+---
+<BaseLayout title="找不到頁面" noindex><main id="main" class="content-page error-page"><span class="eyebrow">404 · 找不到頁面</span><h1>這條路暫時沒有內容。</h1><p class="lead">網址可能已變更，或內容尚未公開。你可以返回首頁或搜尋其他主題。</p><div class="hero-actions"><a class="button-primary" href={withBase('/')}>回到首頁</a><a class="button-secondary" href={withBase('/search/')}>搜尋文章</a></div></main></BaseLayout>

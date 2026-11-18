@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ResourceExplorer from '../../components/resources/ResourceExplorer.vue';
+import {getCollection} from 'astro:content';
+const resources=(await getCollection('resources')).filter(item=>!item.data.draft).sort((a,b)=>a.data.title.localeCompare(b.data.title));
+---
+<BaseLayout title="資源收藏庫"><main id="main" class="content-page"><span class="eyebrow">外部參考</span><h1>資源收藏庫</h1><p class="lead">整理值得回訪的文件與工具。來源、授權和查核日期以目前可見資料為準。</p><ResourceExplorer client:visible resources={resources.map(({data})=>data)}/></main></BaseLayout>

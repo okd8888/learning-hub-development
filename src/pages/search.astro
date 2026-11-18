@@ -1,0 +1,6 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchDialog from '../components/search/SearchDialog.vue';
+const initialQuery=Astro.url.searchParams.get('q')??'';
+---
+<BaseLayout title="搜尋" noindex><main id="main" class="content-page"><span class="eyebrow">全站搜尋</span><h1>搜尋知識庫</h1><p class="lead">搜尋文章標題、摘要、正文與標籤。輸入繁體中文或英文關鍵字。</p><SearchDialog client:load base={import.meta.env.BASE_URL} fullPage initialQuery={initialQuery}/></main></BaseLayout>

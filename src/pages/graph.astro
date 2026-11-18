@@ -1,0 +1,5 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import KnowledgeGraph from '../components/graph/KnowledgeGraph.vue';
+---
+<BaseLayout title="知識關聯圖"><main id="main" class="content-page"><span class="eyebrow">公開內容關聯</span><h1>知識關聯圖</h1><p class="lead">節點代表公開文章；連線來自共同標籤或明確設定的相關內容。可切換分類並使用下方清單瀏覽。</p><KnowledgeGraph client:visible base={import.meta.env.BASE_URL}/></main></BaseLayout>

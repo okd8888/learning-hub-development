@@ -1,0 +1,5 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {siteConfig} from '../config/site';
+---
+<BaseLayout title="關於"><main id="main" class="content-page" data-pagefind-ignore><span class="eyebrow">關於本站</span><h1>讓學習留下脈絡。</h1><p class="lead">LearningHub 是以 Markdown 為正式來源的個人學習知識入口。文章以 Git 管理，網站以靜態頁面建置；訪客不需帳號即可閱讀。</p><section><h2>內容原則</h2><p>示例文章使用合成內容，避免把示例當作作者經歷。正式內容應標註版本、來源與更新日期，並在公開前檢查機密與授權。</p><h2>隱私</h2><p>閱讀中心、收藏與主題偏好只儲存在本機瀏覽器，不建立帳號、不進行跨裝置同步，也不載入預設追蹤服務。</p><h2>授權</h2><p>程式碼與文章授權尚待作者確認。第三方資源依各自授權，未知時會明確標示。</p><h2 id="corrections">勘誤與聯絡</h2><p>如需回報文章錯誤，請透過設定好的專案討論區或 Issue 提交。{siteConfig.repositoryUrl ? <a href={siteConfig.repositoryUrl} rel="noopener noreferrer">前往 GitHub 專案</a> : '目前尚未設定公開專案連結。'}</p><h2>正式站資訊</h2><p>網站網址、作者公開資訊與 Repository 尚待設定。</p></section></main></BaseLayout>

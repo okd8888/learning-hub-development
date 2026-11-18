@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CategorySidebar from '../../components/navigation/CategorySidebar.astro';
+import ArticleCard from '../../components/cards/ArticleCard.astro';
+import { getPublishedArticles,getReadingMinutes,getRelatedArticles,getTaxonomyCounts,sortArticles } from '../../lib/content';
+import taxonomy from '../../config/taxonomy.json';
+import { withBase } from '../../lib/urls';
+import { siteConfig } from '../../config/site';
+import CommentSection from '../../components/comments/CommentSection.vue';
+import { render } from 'astro:content';
+
+const all=sortArticles(await getPublishedArticles());
+export async function getStaticPaths(){
+  const entries=await getPublishedArticles();
+  return entries.flatMap(article=>[
+    {params:{slug:article.data.slug},props:{article,alias:false}},
+    ...article.data.aliases.map(alias=>({params:{slug:alias},props:{article,alias:true}})),
+  ]);
+}
+const {article,alias}=Astro.props;
+const {Content,headings}=await render(article);
+const {data}=article;
+const category=taxonomy.categories.find(item=>item.id===data.category);
+const series=data.series?all.filter(item=>item.data.series===data.series).sort((a,b)=>(a.data.seriesOrder??999)-(b.data.seriesOrder??999)):all.filter(item=>item.data.category===data.category);
+const index=series.findIndex(item=>item.id===article.id);
+const previous=series[index+1]; const next=series[index-1];
+const related=getRelatedArticles(article,all);
+const counts=getTaxonomyCounts(all);
+const minutes=getReadingMinutes(article.body ?? '');
+const rawUrl=siteConfig.repositoryUrl ? `${siteConfig.repositoryUrl}/blob/main/src/content/articles/${article.id}.md` : '';
+const jsonLd={"@context":"https://schema.org","@type":"Article",headline:data.title,description:data.description,datePublished:data.publishedAt,dateModified:data.updatedAt??data.publishedAt,author:{"@type":"Organization",name:"LearningHub"},mainEntityOfPage:new URL(withBase(`/articles/${data.slug}/`),Astro.site).href};
+const safeJsonLd=JSON.stringify(jsonLd).replaceAll('<','\\u003c');
+---
+<BaseLayout title={data.title} description={data.description} canonical={new URL(withBase(`/articles/${data.slug}/`),Astro.site).href}>
+  {alias ? <main id="main" class="content-page"><meta http-equiv="refresh" content={`0;url=${withBase(`/articles/${data.slug}/`)}`} /><h1>文章已移至新位置</h1><p><a href={withBase(`/articles/${data.slug}/`)}>前往「{data.title}」</a></p></main> : <>
+    <div class="article-progress" data-reading-progress aria-hidden="true"></div>
+    <main id="main" class="article-layout">
+      <CategorySidebar counts={counts} active={data.category}/>
+      <article>
+        <header class="article-header">
+          <nav class="breadcrumbs" aria-label="麵包屑"><a href={withBase('/')}>首頁</a><span><a href={withBase(`/categories/${data.category}/`)}>{category?.label ?? data.category}</a></span>{data.subcategory&&<span>{data.subcategory}</span>}</nav>
+          <h1>{data.title}</h1><p class="article-description">{data.description}</p>
+          <div class="article-meta"><time datetime={data.publishedAt}>發布於 {data.publishedAt}</time>{data.updatedAt&&<time datetime={data.updatedAt}>更新於 {data.updatedAt}</time>}<span>{data.difficulty??'未指定程度'}</span><span>約 {minutes} 分鐘</span>{data.tags.map(tag=><a href={withBase(`/tags/${tag}/`)}>#{tag}</a>)}</div>
+        </header>
+        <div class="article-actions"><button type="button" data-favorite={data.stableId} aria-label={`收藏${data.title}`}>☆ 收藏</button><button type="button" data-mark-read={data.stableId} aria-pressed="false">標記已讀</button><button type="button" data-share>分享</button><a href={withBase(`/downloads/${data.slug}.md`)} download>下載 Markdown</a>{rawUrl&&<a href={rawUrl} rel="noopener noreferrer">原始檔</a>}</div><p class="read-nudge" data-read-nudge hidden>閱讀到這裡了，要將這篇文章標記為已讀嗎？ <button type="button" data-mark-read={data.stableId}>標記已讀</button></p>
+        <div class="pagefind-metadata" aria-hidden="true"><span data-pagefind-filter="category">{data.category}</span><span data-pagefind-filter="type">{data.type}</span><span data-pagefind-filter="difficulty">{data.difficulty??'unspecified'}</span>{data.tags.map(tag=><span data-pagefind-filter="tag">{tag}</span>)}</div>
+        <div class="prose" data-pagefind-body><Content /></div>
+        <div class="article-neighbors">{previous?<a class="neighbor" href={withBase(`/articles/${previous.data.slug}/`)}><small>上一篇</small>{previous.data.title}</a>:<span></span>}{next&&<a class="neighbor" href={withBase(`/articles/${next.data.slug}/`)}><small>下一篇</small>{next.data.title}</a>}</div>
+        {related.length>0&&<section class="section-block"><div class="section-header"><div><span class="eyebrow">延伸閱讀</span><h2>相關文章</h2></div></div><div class="article-grid related-grid">{related.map((item,index)=><ArticleCard article={item} index={index}/>)}</div></section>}
+      </article>
+      <aside class="article-aside"><p class="toc-title">本篇目錄</p><nav aria-label="文章目錄"><ol class="toc-list">{headings.filter(h=>h.depth===2||h.depth===3).map(h=><li class={`level-${h.depth}`}><a href={`#${h.slug}`} data-toc-link>{h.text}</a></li>)}</ol></nav><div class="reading-actions"><button type="button" data-back-top>回到頂部 ↑</button><a href={withBase('/about/#corrections')}>回報勘誤</a>{siteConfig.giscusEnabled&&<button type="button" data-comments-toggle>載入留言</button>}</div></aside>
+      <dialog class="image-dialog" data-image-dialog aria-label="圖片預覽"><img alt="" /></dialog>
+      <CommentSection client:visible enabled={siteConfig.giscusEnabled} repo={siteConfig.giscusRepo} category={siteConfig.giscusCategory} categoryId={siteConfig.giscusCategoryId} term={data.stableId}/>
+      <script type="application/ld+json" set:html={safeJsonLd} />
+    </main>
+  </>}
+</BaseLayout>
+---

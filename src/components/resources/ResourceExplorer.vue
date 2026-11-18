@@ -1,0 +1,8 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+type Resource={id:string;title:string;url:string;description:string;type:string;tags:string[];checkedAt:string;license?:string;notes?:string};
+const props=defineProps<{resources:Resource[]}>();const selectedType=ref('');const selectedTag=ref('');
+const types=computed(()=>[...new Set(props.resources.map(item=>item.type))].sort());const tags=computed(()=>[...new Set(props.resources.flatMap(item=>item.tags))].sort());
+const visible=computed(()=>props.resources.filter(item=>(!selectedType.value||item.type===selectedType.value)&&(!selectedTag.value||item.tags.includes(selectedTag.value))));
+</script>
+<template><section class="resource-explorer"><div class="filter-bar"><label>類型 <select v-model="selectedType"><option value="">全部類型</option><option v-for="value in types" :key="value">{{ value }}</option></select></label><label>標籤 <select v-model="selectedTag"><option value="">全部標籤</option><option v-for="value in tags" :key="value">{{ value }}</option></select></label><span class="filter-count">{{ visible.length }} 筆</span></div><div class="resource-grid"><article v-for="resource in visible" :key="resource.id" class="resource-card"><span class="eyebrow">{{ resource.type }}</span><h2><a :href="resource.url" target="_blank" rel="noopener noreferrer">{{ resource.title }} ↗</a></h2><p>{{ resource.description }}</p><div class="resource-meta"><span>標籤：{{ resource.tags.join('、')||'無' }}</span><span>授權：{{ resource.license??'未知' }}</span><time>查核：{{ resource.checkedAt }}</time></div><p v-if="resource.notes">{{ resource.notes }}</p></article></div><div v-if="!visible.length" class="empty-state">沒有符合條件的資源。</div></section></template>

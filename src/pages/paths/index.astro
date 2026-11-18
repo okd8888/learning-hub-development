@@ -1,0 +1,6 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {getCollection} from 'astro:content';
+const paths=(await getCollection('learningPaths')).filter(item=>!item.data.draft);
+---
+<BaseLayout title="學習路徑"><main id="main" class="content-page" data-pagefind-ignore><span class="eyebrow">循序學習</span><h1>學習路徑</h1><p class="lead">依照建議順序閱讀文章，進度以本機已讀標記計算。</p><div class="path-list">{paths.map(path=><a class="path-card" href={`${import.meta.env.BASE_URL}paths/${path.data.slug}/`}><span class="eyebrow">{path.data.difficulty} · {path.data.steps.length} 個步驟</span><h2>{path.data.title}</h2><p>{path.data.description}</p></a>)}</div></main></BaseLayout>

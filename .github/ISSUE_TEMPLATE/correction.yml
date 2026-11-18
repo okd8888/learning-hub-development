@@ -1,0 +1,18 @@
+name: 文章勘誤
+description: 回報 LearningHub 公開文章中的錯誤或過期資訊
+title: '[勘誤] '
+labels: ['content']
+body:
+  - type: input
+    id: url
+    attributes:
+      label: 文章網址
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: 問題或建議
+      description: 請勿貼上病患、客戶或內部系統資料。
+    validations:
+      required: true

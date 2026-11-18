@@ -1,0 +1,22 @@
+---
+import type { Article } from '../../lib/content';
+import { withBase } from '../../lib/urls';
+import { Image } from 'astro:assets';
+const { article, index = 0 } = Astro.props as { article: Article; index?: number };
+const { data } = article;
+const href = withBase(`/articles/${data.slug}/`);
+const typeLabels = { tutorial: '教學', note: '筆記', review: '評估', project: '實作', resource: '資源', reference: '參考', reflection: '心得' };
+const newest = (Date.now() - new Date(`${data.publishedAt}T00:00:00+08:00`).getTime()) / 86400000 <= 14;
+---
+<article class="article-card" data-article-card data-stable-id={data.stableId} data-tags={data.tags.join(',')} data-type={data.type} style={`--card-index:${index}`}>
+  <div class="card-cover">
+    {data.cover ? <Image src={data.cover} alt={data.coverAlt ?? ''} loading="lazy" width={640} height={360} /> : <div class="cover-art" aria-hidden="true"><span>{data.category.toUpperCase()}</span><i>{data.title.slice(0, 1)}</i></div>}
+    <span class="cover-type">{typeLabels[data.type]}</span>
+  </div>
+  <div class="card-content">
+    <div class="card-kicker"><a href={withBase(`/categories/${data.category}/`)}>{data.category}</a>{newest && <span class="badge-new">NEW</span>}{data.updatedAt && <span class="badge-updated">UPDATED</span>}</div>
+    <h2><a href={href}>{data.title}</a></h2>
+    <p>{data.description}</p>
+    <div class="card-meta"><time datetime={data.updatedAt ?? data.publishedAt}>{data.updatedAt ?? data.publishedAt}</time><span>{data.type}</span><span data-card-status={data.stableId}></span><button class="mini-save" type="button" data-favorite={data.stableId} aria-label={`收藏${data.title}`}>☆</button></div>
+  </div>
+</article>

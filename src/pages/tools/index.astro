@@ -1,0 +1,5 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import tools from '../../config/tools';
+---
+<BaseLayout title="工具實驗室"><main id="main" class="content-page"><span class="eyebrow">只在本機運作</span><h1>工具實驗室</h1><p class="lead">小型資料工具在你的瀏覽器執行，不會將輸入內容送出。</p><div class="resource-grid">{tools.filter(tool=>tool.enabled).map(tool=><a class="resource-card" href={`${import.meta.env.BASE_URL}tools/${tool.slug}/`}><span class="eyebrow">瀏覽器工具</span><h2>{tool.title}</h2><p>{tool.description}</p></a>)}</div></main></BaseLayout>

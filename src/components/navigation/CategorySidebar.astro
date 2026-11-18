@@ -1,0 +1,21 @@
+---
+import taxonomy from '../../config/taxonomy.json';
+import { withBase } from '../../lib/urls';
+const { active = '' } = Astro.props;
+const counts = Astro.props.counts ?? {};
+---
+<aside class="side-panel" aria-label="內容分類">
+  <div class="side-section">
+    <p class="side-title">探索知識</p>
+    <a class="side-link" href={withBase('/articles/')} aria-current={active === 'all' ? 'page' : undefined}><span>全部內容</span><small>{counts.all ?? 0}</small></a>
+    {taxonomy.categories.map((category) => <details class="side-category" open={Astro.url.pathname.includes(`/categories/${category.id}/`)}>
+      <summary class="side-link"><span>{category.label}</span><small>{counts[category.id] ?? 0}</small></summary>
+      <div><a class="side-link side-child" href={withBase(`/categories/${category.id}/`)} aria-current={active === category.id ? 'page' : undefined}>全部文章</a>{category.children.map((child) => <a class="side-link side-child" href={withBase(`/categories/${category.id}/${child.id}/`)} aria-current={Astro.url.pathname.includes(`/categories/${category.id}/${child.id}/`) ? 'page' : undefined}><span>{child.label}</span><small>{counts[`${category.id}/${child.id}`] ?? 0}</small></a>)}</div>
+    </details>)}
+  </div>
+  <div class="side-section">
+    <p class="side-title">閱讀空間</p>
+    <a class="side-link" href={withBase('/library/')}>我的閱讀中心</a>
+    <a class="side-link" href={withBase('/tags/')}>探索標籤</a>
+  </div>
+</aside>
