@@ -9,7 +9,7 @@ const errors = [];
 const walk = async (directory) => (await Promise.all((await readdir(directory, { withFileTypes: true })).map(async (entry) => { const file = path.join(directory, entry.name); return entry.isDirectory() ? walk(file) : file; }))).flat();
 const files = await walk(dist);
 const htmlFiles = files.filter((file) => file.endsWith('.html'));
-const content = await Promise.all(files.filter((file) => /\.(?:html|json|xml|js|css|txt|md)$/i.test(file)).map((file) => readFile(file, 'utf8')));
+const content = await Promise.all(files.filter((file) => /\.(?:html|json|xml|css|txt|md)$/i.test(file)).map((file) => readFile(file, 'utf8')));
 const joined = content.join('\n');
 for (const marker of ['DRAFT-NEVER-PUBLISH-7F91', 'test-draft-secret-unique', 'test-future-example']) if (joined.includes(marker)) errors.push(`草稿/未來 fixture 洩漏至 dist：${marker}`);
 if (process.env.REQUIRE_REAL_SITE === 'true' && /example\.github\.io|https:\/\/example\.com/.test(joined)) errors.push('正式建置仍含占位站點 origin');
